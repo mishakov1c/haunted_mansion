@@ -30,3 +30,4 @@ class Ghost(GameObject):
         if spritecollide(self, walls, dokill=False):
             self.rect.topleft = old_enemy_top_left
             self.move_direction = choice([direction for direction in Move_direction])
+            

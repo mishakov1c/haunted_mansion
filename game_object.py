@@ -26,3 +26,4 @@ class GameObject(Sprite):
 
     def is_collided_with(self, another_object: "GameObject") -> bool:
         return self.rect.colliderect(another_object.rect)
+    

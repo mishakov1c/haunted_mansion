@@ -26,3 +26,4 @@ class Player(GameObject):
 
         if spritecollide(self, context['walls'], dokill=False):
             self.rect.topleft = old_player_top_left
+            

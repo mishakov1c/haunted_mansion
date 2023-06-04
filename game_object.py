@@ -7,11 +7,10 @@ from pygame.transform import scale
 
 
 class GameObject(Sprite):
-    sprite_filename: str | None = None
-    sprite_extension: str = "png"
-    width: int = 40
-    height: int = 40
-    color_key: tuple[int, int, int] = (245, 245, 245)
+    sprite_extension = "png"
+    width = 40
+    height = 40
+    color_key = (245, 245, 245)
 
     def __init__(self, topleft_x: int, topleft_y: int):
         super().__init__()

@@ -1,8 +1,8 @@
 import enum
 
 
-class Move_direction(enum.Enum):
-    W = 'W'
-    S = 'S'
-    A = 'A'
-    D = 'D'
+class MoveDirection(enum.Enum):
+    UP = 'W'
+    DOWN = 'S'
+    LEFT = 'A'
+    RIGHT = 'D'

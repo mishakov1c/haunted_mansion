@@ -1,7 +1,9 @@
 from config import PLAYER_SPEED
+from game_context import GameContext
 from game_object import GameObject
 from pygame.sprite import spritecollide
 import pygame
+
 
 class Player(GameObject):
     sprite_filename = 'player'
@@ -11,8 +13,8 @@ class Player(GameObject):
         super().__init__(topleft_x, topleft_y)
 
 
-    def make_move(self, context: dict):
-        old_player_top_left = context['player'].rect.topleft
+    def make_move(self, context: GameContext):
+        old_player_top_left = context.player.rect.topleft
         keys = pygame.key.get_pressed()
         
         if keys[pygame.K_w]:
@@ -24,6 +26,6 @@ class Player(GameObject):
         if keys[pygame.K_d]:
             self.rect = self.rect.move(PLAYER_SPEED, 0)
 
-        if spritecollide(self, context['walls'], dokill=False):
+        if spritecollide(self, context.walls, dokill=False):
             self.rect.topleft = old_player_top_left
             

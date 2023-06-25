@@ -24,19 +24,18 @@ def draw_whole_screen(screen: pygame.Surface, context: GameContext) -> None:
 
 def get_all_cells_coordinates(
     screen_width: int,
-    screen_heigth: int,
+    screen_height: int,
     wall_block_width: int,
-    wall_block_heigth: int,
+    wall_block_height: int,
 ) -> list[tuple[int, int]]:
-
     all_block_coordinates = []
     horizontal_wall_blocks_amount = screen_width // wall_block_width
-    vertical_wall_blocks_amount = screen_heigth // wall_block_heigth
+    vertical_wall_blocks_amount = screen_height // wall_block_height
 
     for horizontal_block_num in range(horizontal_wall_blocks_amount):
         for vert_block_num in range(vertical_wall_blocks_amount):
             all_block_coordinates.append(
-                (horizontal_block_num * wall_block_width, vert_block_num * wall_block_heigth),
+                (horizontal_block_num * wall_block_width, vert_block_num * wall_block_height),
             )
 
     return all_block_coordinates
@@ -44,22 +43,26 @@ def get_all_cells_coordinates(
 
 def compose_context(screen_width: int, screen_height: int) -> GameContext:
     walls_coordinates = calculate_walls_coordinates(
-                            screen_width, screen_height,
-                            Wall.width,
-                            Wall.height,
-                        )
-
+        screen_width, screen_height,
+        Wall.width,
+        Wall.height,
+    )
+    all_cells_coordinates = get_all_cells_coordinates(
+        screen_width,
+        screen_height,
+        Wall.width,
+        Wall.height
+    )
     walls = Group(*[Wall(x, y) for (x, y) in walls_coordinates])
     coin = Coin(200, 200)
     player = Player(screen_width - Wall.width * 2, Wall.height)
     ghosts = []
 
+    empty_cells_coordinates = list(set(all_cells_coordinates) - set(walls_coordinates))
+
     for _ in range(ENEMIES_AMOUNT):
-        empty_cell_top_left = get_empty_cell_coordinate(
-                                walls_coordinates,
-                                screen_width,
-                                screen_height
-                            )
+        empty_cell_top_left = choice(empty_cells_coordinates)
+        empty_cells_coordinates.remove(empty_cell_top_left)
         ghosts.append(Ghost(empty_cell_top_left[0], empty_cell_top_left[1]))
 
     context = GameContext(
@@ -72,23 +75,6 @@ def compose_context(screen_width: int, screen_height: int) -> GameContext:
     return context
 
 
-def get_empty_cell_coordinate(
-    walls_coordinates: list[tuple[int, int]],
-    screen_width: int,
-    screen_height: int
-) -> tuple[int, int]:
-
-    all_cells_coordinates = get_all_cells_coordinates(
-                                screen_width,
-                                screen_height,
-                                Wall.width,
-                                Wall.height
-                            )
-    empty_cells_coordinates = list(set(all_cells_coordinates) - set(walls_coordinates))
-
-    return choice(empty_cells_coordinates)
-
-
 def show_game_over(screen: pygame.Surface) -> None:
     game_over_sound = Sound('resources/game_over.wav')
     game_over_sound.play()
@@ -97,15 +83,11 @@ def show_game_over(screen: pygame.Surface) -> None:
     pygame.time.wait(5000)
 
 
-def keep_coin(context: GameContext, screen: pygame.surface, coin_sound: Sound) -> None:
+def keep_coin(context: GameContext, coin_sound: Sound) -> None:
     context.score += 1
     coin_sound.play()
-    wall_coordinates = [wall.rect.topleft for wall in context.walls.sprites()]
-    context.coin.rect.topleft = get_empty_cell_coordinate(
-                                    wall_coordinates,
-                                    screen.get_width(),
-                                    screen.get_height()
-                                )
+    empty_cells_coordinates = list(set(context.empty_cells_coordinates) - set(context.walls_coordinates))
+    context.coin.rect.topleft = choice(empty_cells_coordinates)
 
 
 def main() -> None:
@@ -131,7 +113,7 @@ def main() -> None:
         context.player.make_move(context.player.rect.topleft, context.walls)
 
         if context.player.is_collided_with(context.coin):
-            keep_coin(context, screen, coin_sound)
+            keep_coin(context, coin_sound)
 
         for ghost in context.ghosts:
             ghost.make_move(context.walls)

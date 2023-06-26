@@ -28,7 +28,6 @@ def get_all_cells_coordinates(
     wall_block_width: int,
     wall_block_heigth: int,
 ) -> list[tuple[int, int]]:
-
     all_block_coordinates = []
     horizontal_wall_blocks_amount = screen_width // wall_block_width
     vertical_wall_blocks_amount = screen_heigth // wall_block_heigth
@@ -44,10 +43,10 @@ def get_all_cells_coordinates(
 
 def compose_context(screen_width: int, screen_height: int) -> GameContext:
     walls_coordinates = calculate_walls_coordinates(
-                            screen_width, screen_height,
-                            Wall.width,
-                            Wall.height,
-                        )
+        screen_width, screen_height,
+        Wall.width,
+        Wall.height,
+    )
 
     walls = Group(*[Wall(x, y) for (x, y) in walls_coordinates])
     coin = Coin(200, 200)
@@ -56,10 +55,10 @@ def compose_context(screen_width: int, screen_height: int) -> GameContext:
 
     for _ in range(ENEMIES_AMOUNT):
         empty_cell_top_left = get_empty_cell_coordinate(
-                                walls_coordinates,
-                                screen_width,
-                                screen_height
-                            )
+            walls_coordinates,
+            screen_width,
+            screen_height,
+        )
         ghosts.append(Ghost(empty_cell_top_left[0], empty_cell_top_left[1]))
 
     context = GameContext(
@@ -77,13 +76,12 @@ def get_empty_cell_coordinate(
     screen_width: int,
     screen_height: int
 ) -> tuple[int, int]:
-
     all_cells_coordinates = get_all_cells_coordinates(
-                                screen_width,
-                                screen_height,
-                                Wall.width,
-                                Wall.height
-                            )
+        screen_width,
+        screen_height,
+        Wall.width,
+        Wall.height,
+    )
     empty_cells_coordinates = list(set(all_cells_coordinates) - set(walls_coordinates))
 
     return choice(empty_cells_coordinates)
@@ -97,15 +95,15 @@ def show_game_over(screen: pygame.Surface) -> None:
     pygame.time.wait(5000)
 
 
-def keep_coin(context: GameContext, screen: pygame.surface, coin_sound: Sound) -> None:
+def keep_coin(context: GameContext, screen: pygame.Surface, coin_sound: Sound) -> None:
     context.score += 1
     coin_sound.play()
     wall_coordinates = [wall.rect.topleft for wall in context.walls.sprites()]
     context.coin.rect.topleft = get_empty_cell_coordinate(
-                                    wall_coordinates,
-                                    screen.get_width(),
-                                    screen.get_height()
-                                )
+        wall_coordinates,
+        screen.get_width(),
+        screen.get_height(),
+    )
 
 
 def main() -> None:

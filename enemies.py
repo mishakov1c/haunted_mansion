@@ -1,7 +1,7 @@
 from constants import ENEMY_SPEED
 from enums import MoveDirection
 from game_object import GameObject
-from pygame.sprite import spritecollide
+from pygame.sprite import Group, spritecollide
 from random import choice
 from walls import Wall
 
@@ -10,7 +10,7 @@ class Ghost(GameObject):
     sprite_filename = 'ghost'
     move_direction = MoveDirection.RIGHT
 
-    def make_move(self, walls: Wall) -> None:
+    def make_move(self, walls: Group[Wall]) -> None:
         old_enemy_top_left = self.rect.topleft
 
         if self.move_direction == MoveDirection.UP:

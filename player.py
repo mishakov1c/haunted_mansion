@@ -1,6 +1,7 @@
 from constants import PLAYER_SPEED
 from game_object import GameObject
 from pygame.sprite import Group, spritecollide
+from walls import Wall
 import pygame
 
 
@@ -10,7 +11,7 @@ class Player(GameObject):
     def __init__(self, topleft_x: int, topleft_y: int):
         super().__init__(topleft_x, topleft_y)
 
-    def make_move(self, topleft: tuple[int, int], walls: Group):
+    def make_move(self, topleft: tuple[int, int], walls: Group[Wall]):
         old_player_top_left = topleft
         keys = pygame.key.get_pressed()
 
